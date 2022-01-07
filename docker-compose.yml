@@ -1,0 +1,40 @@
+version: '3.6'
+services:
+        gitlab:
+                image: 'gitlab/gitlab-ce:latest'
+                restart: always
+                hostname: 'gitlab.example.com'
+                environment:
+                        GITLAB_OMNIBUS_CONFIG: |
+                                external_url 'https://gitlab.example.com'
+                                nginx['listen_port'] = 80
+                                nginx['listen_https'] = false
+                                nginx['proxy_set_headers'] = {
+                                        "X-Forwarded-Proto" => "https",
+                                        "X-Forwarded-Ssl" => "on"
+                                }
+                                letsencrypt['enabled'] = false
+                        VIRTUAL_HOST: gitlab.example.com
+                expose:
+                        - '80'
+                volumes:
+                        - '$GITLAB_HOME/config:/etc/gitlab'
+                        - '$GITLAB_HOME/logs:/var/log/gitlab'
+                        - '$GITLAB_HOME/data:/var/opt/gitlab'
+                shm_size: '256m'
+        nginx:
+                image: nginx:1.21.5-alpine
+                volumes:
+                        - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+                        - /etc/letsencrypt/:/etc/letsencrypt/
+                ports:
+                        - "80:80"
+                        - "443:443"
+        authserver:
+                image: nss0xvu1yqufia4p/authserver:0.0.13
+                expose:
+                        - "80"
+                environment:
+                        - AUTH_SERVER_SECRET
+                        - DOMAIN_NAME
+
