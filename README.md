@@ -35,3 +35,14 @@ Upon attempting to access the Gitlab server the NginX proxy then calls the auth 
 This enables a basic level of access control to the Gitlab server keeping all tokens ephemeral and removing the need for a database.
 The Gitlab server can then be made fully public and will seem seamless when accessesed through a valid link.  
 The server itself is written in rust and built using musl and multi stage builds to produce a container image just 9.9MB in size.
+
+### Setup
+* Start up a server with enough resources to run Gitlab (It is quite resource intensive).
+* Copy the docker compose file and nginx.conf files to the server.
+* Point your domain at your server.
+* Install docker, docker compose and certbot.
+* Run `certbot certonly --standalone -d gitlab.example.com --register-unsafely-without-email --no-eff-email`
+* Generate a secret using the authserver CLI
+* Set the secret and domain name environment variables
+* Run `docker-compose up`
+* Thats it. Urls can also be generated with the authserver CLI.
