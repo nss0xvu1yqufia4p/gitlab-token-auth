@@ -27,6 +27,7 @@ services:
                 volumes:
                         - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
                         - /etc/letsencrypt/:/etc/letsencrypt/
+                        - ./custom_403.html:/usr/share/nginx/html/custom_403.html
                 ports:
                         - "80:80"
                         - "443:443"
